@@ -3,6 +3,7 @@ package com.freewheelin.student.domain.student;
 import com.freewheelin.student.api.util.EnumPattern;
 import com.freewheelin.student.api.util.StringUtil;
 import com.freewheelin.student.domain.BaseEntity;
+import com.freewheelin.student.domain.stsjBridge.StSjBridge;
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Description("학생 정보")
 @Getter
@@ -22,6 +25,7 @@ public class Student extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "student_id")
     private Long id;
 
     @Description("학생 이름")
@@ -46,6 +50,9 @@ public class Student extends BaseEntity {
     @Size(min = 10, max = 13, message = "전화번호가 올바르지 않습니다.")
     @Column(length = 13)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "student")
+    private List<StSjBridge> stSjBridgeList = new ArrayList<>();
 
     @Builder
     public Student(String name, int age, String schoolType, String phoneNumber){

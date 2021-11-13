@@ -1,9 +1,11 @@
 package com.freewheelin.student.service.subject;
 
+import com.freewheelin.student.api.common.response.BaseResponse;
 import com.freewheelin.student.api.common.response.CMResponse;
 import com.freewheelin.student.api.common.response.Constant;
 import com.freewheelin.student.api.common.response.ResPonseExceptionHandler;
 import com.freewheelin.student.api.dto.ErrResponseDto;
+import com.freewheelin.student.api.dto.SubjectListResponseDto;
 import com.freewheelin.student.api.dto.SubjectSaveRequestDto;
 import com.freewheelin.student.domain.subject.Subject;
 import com.freewheelin.student.domain.subject.SubjectRepository;
@@ -12,6 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -30,7 +37,7 @@ public class SubjectService {
 
             if(subject != null){
                 HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-                String statusCode = Constant.STATUS_CODE.BAD_REQUEST_BODY.getValue();
+                String statusCode = Constant.STATUS_CODE.ALREADY_EXIST_SUBJECT.getValue();
                 String statusMessage = Constant.STATUS_MESSAGE.ALREADY_EXIST_SUBJECT.getValue();
                 String regexKey =  "name";
                 String replaceStr = subject.getName();
@@ -56,4 +63,24 @@ public class SubjectService {
                 .body(new CMResponse(code, message));
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findByAllDesc() {
+        List<SubjectListResponseDto> list = new ArrayList<>();
+        list = subjectRepository.findAllDesc();
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("subjects", list);
+        BaseResponse response = BaseResponse.builder()
+                .data(resultMap)
+                .error(null)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> delete(Long id) {
+        subjectRepository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("");
+    }
 }

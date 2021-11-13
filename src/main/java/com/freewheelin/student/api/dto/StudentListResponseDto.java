@@ -1,9 +1,8 @@
 package com.freewheelin.student.api.dto;
 
+import com.freewheelin.student.domain.BaseEntity;
 import com.freewheelin.student.domain.student.Student;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class StudentListResponseDto {
