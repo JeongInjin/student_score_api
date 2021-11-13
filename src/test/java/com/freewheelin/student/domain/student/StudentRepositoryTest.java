@@ -26,7 +26,7 @@ class StudentRepositoryTest {
         //given
         String name = "학생1";
         int age = 15;
-        SchoolType schoolType = SchoolType.ELEMENTARY;
+        String schoolType = "HIGH";
         String phoneNumber = "01012345678";
         studentRepository.save(Student.builder()
                 .name(name)

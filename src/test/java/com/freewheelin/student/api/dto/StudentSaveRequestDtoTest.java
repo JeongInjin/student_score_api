@@ -12,7 +12,7 @@ class StudentSaveRequestDtoTest {
     public void UserSaveRequestDTO_builder_테스트() throws Exception{
         String name = "학생테스트";
         int age = 15;
-        SchoolType schoolType = SchoolType.HIGH;
+        String schoolType = "HIGH";
         String phoneNumber = "01011112222";
 
         StudentSaveRequestDto requestDto = StudentSaveRequestDto.builder()

@@ -7,17 +7,17 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CommonResponse<T> extends BaseResponse {
-//    private StatusMessage status;
-    private T data;
-    private String error;
-
-    public CommonResponse(T data){
-        this.data = data;
-        if(data instanceof List){
-
-        }else{
-
-        }
-    }
+public class CommonResponse<T> {
+////    private StatusMessage status;
+//    private T data;
+//    private String error;
+//
+//    public CommonResponse(T data){
+//        this.data = data;
+//        if(data instanceof List){
+//
+//        }else{
+//
+//        }
+//    }
 }

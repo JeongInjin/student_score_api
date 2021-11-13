@@ -1,7 +1,12 @@
 package com.freewheelin.student.domain.student;
 
-public enum SchoolType {
-    ELEMENTARY,
-    MIDDLE,
-    HIGH
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class SchoolType {
+    private String ELEMENTARY;
+    private String MIDDLE;
+    private String HIGH;
 }

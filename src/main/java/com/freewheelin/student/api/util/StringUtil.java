@@ -17,20 +17,15 @@ public final class StringUtil {
     }
 
     /**
-     * 입력된 문자열이 주어진 문자열과 일치하는 모든 문자열을 바꿔야할 문자열로 변경<br><br>
+     * 주어진 문자열이 null 또는 공백일 경우 참 반환
      *
-     * StringUtils.replaceAll("Anyframe Java Test Anyframe Java Test", "Anyframe", "Enterprise") = "Enterprise Java Test Enterprise Java Test"
+     * StringUtils.isEmpty("") = true
      *
-     * @param message 문자열
-     * @param regex 검색할 문자열
-     * @param replacement 변경할 문자열
-     * @return 검색된 모든 문자열을 변경한 문자열
-     * @see String#replaceAll(String, String)
+     * @param str 문자열
+     * @return null 또는 공백일 경우 true
      */
-    public static String replaceAll(String message, String regex, String replacement){
-        if (message == null) {
-            return null;
-        }
-        return message.replaceAll(regex, replacement);
+    public static boolean isEmpty(String str) {
+        return (str == null || str.length() == 0);
     }
+
 }

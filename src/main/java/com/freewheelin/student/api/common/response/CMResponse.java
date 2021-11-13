@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CMResponse extends BaseResponse{
+public class CMResponse {
 
     private String code = null;
     private String message = null;

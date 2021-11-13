@@ -1,5 +1,6 @@
 package com.freewheelin.student.domain.student;
 
+import com.freewheelin.student.api.util.EnumPattern;
 import com.freewheelin.student.api.util.StringUtil;
 import com.freewheelin.student.domain.BaseEntity;
 import jdk.jfr.Description;
@@ -36,9 +37,10 @@ public class Student extends BaseEntity {
     private int age;
 
     @Description("학생 학교급")
+    @EnumPattern
+    @Size(max = 10, message = "학생 학교급를 다시 확인해 주세요.")
     @NotNull(message = "학생 학교급이 없습니다.")
-    @Enumerated(EnumType.STRING)
-    private SchoolType schoolType;
+    private String schoolType;
 
     @NotNull(message = "학생 전화번호가 없습니다.")
     @Size(min = 10, max = 13, message = "전화번호가 올바르지 않습니다.")
@@ -46,7 +48,7 @@ public class Student extends BaseEntity {
     private String phoneNumber;
 
     @Builder
-    public Student(String name, int age, SchoolType schoolType, String phoneNumber){
+    public Student(String name, int age, String schoolType, String phoneNumber){
         this.name = name;
         this.age = age;
         this.schoolType = schoolType;

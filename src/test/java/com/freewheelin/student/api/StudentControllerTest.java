@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,7 +54,7 @@ class StudentControllerTest {
         //given
         String name = "학생1";
         int age = 15;
-        SchoolType schoolType = SchoolType.ELEMENTARY;
+        String schoolType = "HIGH";
         String phoneNumber = "01012345678";
         StudentSaveRequestDto requestDto = StudentSaveRequestDto.builder()
                 .name(name)
@@ -77,5 +78,48 @@ class StudentControllerTest {
         assertThat(student.getAge()).isEqualTo(15);
         assertThat(student.getName()).isEqualTo("학생1");
         assertThat(student.getAdminId()).isEqualTo("ADMIN");
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    public void Student_중복가입은_안됨() throws Exception{
+        //given
+        String name = "학생1";
+        int age = 15;
+        String schoolType = "HIGH";
+        String phoneNumber = "01012345678";
+        StudentSaveRequestDto requestDto = StudentSaveRequestDto.builder()
+                .name(name)
+                .age(age)
+                .schoolType(schoolType)
+                .phoneNumber(phoneNumber)
+                .build();
+
+        String url = "http://localhost:" + port + "/students";
+
+        //when
+        mvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isCreated());
+
+        name = "학생2";
+        age = 13;
+        schoolType = "HIGH";
+        phoneNumber = "01012345678";
+        requestDto = StudentSaveRequestDto.builder()
+                .name(name)
+                .age(age)
+                .schoolType(schoolType)
+                .phoneNumber(phoneNumber)
+                .build();
+
+        //then
+        List<Student> studentList = studentRepository.findAll();
+        Student student = studentList.get(0);
+        assertThat(student.getAge()).isEqualTo(15);
+        assertThat(student.getName()).isEqualTo("학생1");
+        assertThat(student.getAdminId()).isEqualTo("ADMIN");
+        assertThat(studentList.size() == 1);
     }
 }
