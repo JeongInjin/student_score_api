@@ -68,7 +68,7 @@ class StudentControllerTest {
         mvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         //then
         List<Student> studentList = studentRepository.findAll();
