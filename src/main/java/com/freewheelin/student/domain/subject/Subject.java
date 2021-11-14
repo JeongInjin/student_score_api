@@ -1,5 +1,6 @@
 package com.freewheelin.student.domain.subject;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.freewheelin.student.domain.BaseEntity;
 import com.freewheelin.student.domain.stsjBridge.StSjBridge;
 import jdk.jfr.Description;
@@ -33,11 +34,15 @@ public class Subject extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "subject",cascade = CascadeType.REMOVE)
+    @JsonBackReference
     private List<StSjBridge> stSjBridgeList = new ArrayList<>();
 
     @Builder
     public Subject(String name, Long id) {
         this.id = id;
         this.name = name;
+    }
+    public Subject(Long id){
+        this.id = id;
     }
 }

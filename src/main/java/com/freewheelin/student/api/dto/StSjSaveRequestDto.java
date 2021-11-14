@@ -1,20 +1,14 @@
 package com.freewheelin.student.api.dto;
 
+import com.freewheelin.student.domain.BaseEntity;
 import com.freewheelin.student.domain.stsjBridge.StSjBridge;
-import com.freewheelin.student.domain.student.Student;
-import com.freewheelin.student.domain.subject.Subject;
-import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 @RequiredArgsConstructor
 @Getter
-public class StSjSaveRequestDto {
+public class StSjSaveRequestDto extends BaseEntity {
     private Long stSjBridge_id;
 
     private Long student_id;
@@ -31,8 +25,8 @@ public class StSjSaveRequestDto {
         this.score = score;
     }
 
-    public StSjBridge toEntity(Long subject_id, Long subjectId, int score){
-        return new StSjBridge(stSjBridge_id, this.subject_id, this.score);
+    public StSjBridge toEntity(Long student_id, Long subject_id, int score){
+        return new StSjBridge(student_id, subject_id, score);
     }
 
     public void setStSjBridge_id(Long stSjBridge_id) {

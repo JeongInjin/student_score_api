@@ -1,10 +1,13 @@
 package com.freewheelin.student.service.score;
 
 
+import com.freewheelin.student.api.common.response.BaseResponse;
 import com.freewheelin.student.api.common.response.CMResponse;
 import com.freewheelin.student.api.common.response.Constant;
 import com.freewheelin.student.api.common.response.ResPonseExceptionHandler;
 import com.freewheelin.student.api.dto.ErrResponseDto;
+import com.freewheelin.student.api.dto.ScoreStudentResponse;
+import com.freewheelin.student.api.dto.ScoreStudentResponseInterface;
 import com.freewheelin.student.api.dto.StSjSaveRequestDto;
 import com.freewheelin.student.api.util.StringUtil;
 import com.freewheelin.student.domain.stsjBridge.StSjBridge;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -36,7 +40,7 @@ public class ScoreService {
         HashMap<String, Object> resultMap;
         resultMap = ScoreDataValidationCheck(requestDto);
 
-        if(resultMap.get("returnCode").equals("catch")){
+        if(resultMap.get("result").toString().equals("catch")){
             return (ResponseEntity<Object>) throwExceptionHandler(resultMap);
         }else{
             Optional<StSjBridge> stSjBridge = stSjBridgeRepository.findByStIdSjId(requestDto.getStudent_id(), requestDto.getSubject_id());
@@ -46,7 +50,9 @@ public class ScoreService {
                 requestDto.setStSjBridge_id(stSjBridge.get().getId());
                 stSjBridgeRepository.saveSql(requestDto.getScore(), requestDto.getStSjBridge_id());
             }else{ // insert
-                stSjBridgeRepository.save(requestDto.toEntity(requestDto.getSubject_id(), requestDto.getSubject_id(), requestDto.getScore()));
+                StSjBridge saveDto = new StSjBridge(requestDto.getStudent_id(), requestDto.getSubject_id(), requestDto.getScore());
+                stSjBridgeRepository.save(saveDto);
+//                stSjBridgeRepository.save(requestDto.toEntity(requestDto.getStudent_id(), requestDto.getSubject_id(), requestDto.getScore()));
             }
 
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -59,7 +65,7 @@ public class ScoreService {
         HashMap<String, Object> resultMap;
         resultMap = ScoreDataValidationCheck(requestDto);
 
-        if(resultMap.get("returnCode").equals("catch")){
+        if(resultMap.get("result").toString().equals("catch")){
             return (ResponseEntity<Object>) throwExceptionHandler(resultMap);
         }else{
             Optional<StSjBridge> stSjBridge = stSjBridgeRepository.findByStIdSjId(requestDto.getStudent_id(), requestDto.getSubject_id());
@@ -79,7 +85,7 @@ public class ScoreService {
         HashMap<String, Object> resultMap;
         resultMap = ScoreDataValidationCheck(requestDto);
 
-        if(resultMap.get("returnCode").equals("catch")){
+        if(resultMap.get("result").toString().equals("catch")){
             return (ResponseEntity<Object>) throwExceptionHandler(resultMap);
         }else{
             stSjBridgeRepository.deleteByStIdSjId(requestDto.getStudent_id(), requestDto.getSubject_id());
@@ -87,6 +93,76 @@ public class ScoreService {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new CMResponse(null, null));
         }
+    }
+
+    public ResponseEntity<Object> studentScoreAvg(Long studentId) {
+        HashMap<String, Object> resultMap;
+        resultMap = findStudentReturnMap(studentId);
+
+        if(resultMap.get("result").toString().equals("catch")){
+            return (ResponseEntity<Object>) throwExceptionHandler(resultMap);
+        }else{
+            List<ScoreStudentResponseInterface> list =  stSjBridgeRepository.findByStudentAllSubject(studentId);
+            int studentAvg = getStudentAvg(list);
+            HashMap<String, Object> responseMap = new HashMap<>(){{
+                put("averageScore", studentAvg);
+                put("subjects", list);
+            }};
+            BaseResponse response = BaseResponse.builder()
+                    .data(responseMap)
+                    .error(null)
+                    .build();
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+
+    public ResponseEntity<Object> subjectScoreAvg(Long subjectId) {
+        HashMap<String, Object> resultMap;
+        resultMap = findSubjectReturnMap(subjectId);
+        if(resultMap.get("result").toString().equals("catch")){
+            return (ResponseEntity<Object>) throwExceptionHandler(resultMap);
+        }else{
+            List<ScoreStudentResponseInterface> list =  stSjBridgeRepository.findByAllSubjectScoreAvg(subjectId);
+            int studentAvg = getStudentAvg(list);
+            HashMap<String, Object> responseMap = new HashMap<>(){{
+                put("averageScore", studentAvg);
+                put("subjects", list);
+            }};
+            BaseResponse response = BaseResponse.builder()
+                    .data(responseMap)
+                    .error(null)
+                    .build();
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+    private int getStudentAvg(List<ScoreStudentResponseInterface> list) {
+        int result = 0;
+        int score = 0, countSubject = 0;
+        if(list.size() > 0 ){
+            for(ScoreStudentResponseInterface s : list){
+                if(s.getScore() > 0){
+                    score += s.getScore();
+                    countSubject++;
+                }
+            }
+
+            if(countSubject > 0){
+                try{
+                    result = (int) Math.ceil(score / countSubject);
+                }catch (Exception e){
+                    System.out.println(e.toString());
+                    result = -1;
+                }
+            }else{
+                result = -1;
+            }
+        }
+
+        return result;
     }
 
     private HttpEntity<Object> throwExceptionHandler(HashMap<String, Object> resultMap) {
@@ -101,39 +177,49 @@ public class ScoreService {
     }
 
     private HashMap<String, Object> ScoreDataValidationCheck(StSjSaveRequestDto requestDto) {
+        HashMap<String, Object> resultMap;
+
+        resultMap = findStudentReturnMap(requestDto.getStudent_id());
+        if(StringUtil.isEmpty(resultMap.get("result").toString())){
+            resultMap = findSubjectReturnMap(requestDto.getSubject_id());
+        }
+
+        return resultMap;
+    }
+
+    private HashMap<String, Object> findSubjectReturnMap(Long subjectId) {
         HashMap<String, Object> resultMap = new HashMap<>() {{
-           put("returnCode", "");
+            put("result", "");
         }};
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-        String statusCode = "", statusMessage = "", regexKey = "", replaceStr = "";
-
-        Optional<Student> student = studentRepository.findById(requestDto.getStudent_id());
-        if(student.isEmpty()){
-            resultMap.put("returnCode", "catch");
-            statusCode = Constant.STATUS_CODE.STUDENT_NOT_FOUND.getValue();
-            statusMessage = Constant.STATUS_MESSAGE.STUDENT_NOT_FOUND.getValue();
-            regexKey =  "studentId";
-            replaceStr = String.valueOf(requestDto.getSubject_id());
-        }
-
-        if(StringUtil.isEmpty(statusCode)){
-            Optional<Subject> subject = subjectRepository.findById(requestDto.getSubject_id());
-            if(subject.isEmpty()){
-                resultMap.put("returnCode", "catch");
-                statusCode = Constant.STATUS_CODE.SUBJECT_NOT_FOUND.getValue();
-                statusMessage = Constant.STATUS_MESSAGE.SUBJECT_NOT_FOUND.getValue();
-                regexKey =  "subjectId";
-                replaceStr = String.valueOf(requestDto.getSubject_id());
-            }
-        }
-
-        if(resultMap.get("returnCode").equals("catch")){
-            resultMap.put("httpStatus" ,httpStatus);
-            resultMap.put("statusCode" ,statusCode);
-            resultMap.put("statusMessage" ,statusMessage);
-            resultMap.put("regexKey" ,regexKey);
-            resultMap.put("replaceStr" ,replaceStr);
+        Optional<Subject> subject = subjectRepository.findById(subjectId);
+        if(subject.isEmpty()){
+            resultMap.put("result", "catch");
+            resultMap.put("httpStatus", httpStatus);
+            resultMap.put("statusCode", Constant.STATUS_CODE.SUBJECT_NOT_FOUND.getValue());
+            resultMap.put("statusMessage", Constant.STATUS_MESSAGE.SUBJECT_NOT_FOUND.getValue());
+            resultMap.put("regexKey", "subjectId");
+            resultMap.put("replaceStr", String.valueOf(subjectId));
         }
         return resultMap;
     }
+
+    private HashMap<String, Object> findStudentReturnMap(Long studentId) {
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+        HashMap<String, Object> resultMap = new HashMap<>() {{
+            put("result", "");
+        }};
+
+        Optional<Student> student = studentRepository.findById(studentId);
+        if(student.isEmpty()){
+            resultMap.put("result", "catch");
+            resultMap.put("httpStatus", httpStatus);
+            resultMap.put("statusCode", Constant.STATUS_CODE.STUDENT_NOT_FOUND.getValue());
+            resultMap.put("statusMessage", Constant.STATUS_MESSAGE.STUDENT_NOT_FOUND.getValue());
+            resultMap.put("regexKey", "studentId");
+            resultMap.put("replaceStr", String.valueOf(studentId));
+        }
+        return resultMap;
+    }
+
 }

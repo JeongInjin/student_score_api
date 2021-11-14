@@ -1,5 +1,6 @@
 package com.freewheelin.student.domain.stsjBridge;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.freewheelin.student.api.dto.StudentListResponseDto;
 import com.freewheelin.student.api.dto.SubjectListResponseDto;
 import com.freewheelin.student.domain.BaseEntity;
@@ -25,11 +26,13 @@ public class StSjBridge extends BaseEntity {
 
     @ManyToOne
     @Description("학생 테이블 키")
+    @JsonBackReference
     @JoinColumn(name = "student_id")
     private Student student;
 
     @ManyToOne
     @Description("과목 테이블 키")
+    @JsonBackReference
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
@@ -54,8 +57,14 @@ public class StSjBridge extends BaseEntity {
     }
     @Builder
     public StSjBridge(Long studentId, Long subjectId, int score){
-        this.student = Student.builder().id(studentId).build();
-        this.subject = Subject.builder().id(subjectId).build();
+//        this.student = new Student().builder()
+//                .id(studentId)
+//                .build();
+//        this.subject = Subject.builder()
+//                .id(subjectId)
+//                .build();
+        this.student = new Student(studentId);
+        this.subject = new Subject(subjectId);
         this.score = score;
     }
     public StSjBridge(int score) {

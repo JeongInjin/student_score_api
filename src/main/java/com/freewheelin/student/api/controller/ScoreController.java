@@ -19,7 +19,9 @@ public class ScoreController {
     @PostMapping("/students/{studentId}/subjects/{subjectId}/scores")
     public ResponseEntity<Object> scoreSave(@PathVariable Long studentId, @PathVariable Long subjectId, @RequestBody Score score){
         boolean check;
-        check = scoreParameterValidation(studentId, subjectId, score.getScore());
+        check = scoreParameterValidation(studentId);
+        if(check) scoreParameterValidation(subjectId);
+        if(check) scoreParameterValidation(score.getScore());
         if(!check) return ResPonseExceptionHandler.handleMethodArgumentNotValid("필수 값이 없거나, 점수를 다시 한번 확인해 주세요(0~100점)");
 
         StSjSaveRequestDto requestDto = StSjSaveRequestDto.builder()
@@ -35,7 +37,10 @@ public class ScoreController {
     @PutMapping("/students/{studentId}/subjects/{subjectId}/scores")
     public ResponseEntity<Object> scoreModify(@PathVariable Long studentId, @PathVariable Long subjectId, @RequestBody Score score){
         boolean check;
-        check = scoreParameterValidation(studentId, subjectId, score.getScore());
+        check = scoreParameterValidation(studentId);
+        if(check) scoreParameterValidation(subjectId);
+        if(check) scoreParameterValidation(score.getScore());
+
         if(!check) return ResPonseExceptionHandler.handleMethodArgumentNotValid("필수 값이 없거나, 점수를 다시 한번 확인해 주세요(0~100점)");
 
         StSjSaveRequestDto requestDto = StSjSaveRequestDto.builder()
@@ -46,11 +51,9 @@ public class ScoreController {
 
         return scoreService.modify(requestDto);
     }
-    protected boolean scoreParameterValidation(Long studentId, Long subjectId, int score){
+    protected boolean scoreParameterValidation(Object v){
         boolean result;
-        result = StringUtil.requiredValidationCheckReturnBoolean(studentId);
-        if(result) result = StringUtil.requiredValidationCheckReturnBoolean(subjectId);
-        if(result) result = StringUtil.requiredValidationCheckReturnBoolean(score);
+        result = StringUtil.requiredValidationCheckReturnBoolean(v);
         return result;
     }
 
@@ -58,7 +61,9 @@ public class ScoreController {
     @DeleteMapping("/students/{studentId}/subjects/{subjectId}/scores")
     public ResponseEntity<Object> scoreDelete(@PathVariable Long studentId, @PathVariable Long subjectId){
         boolean check;
-        check = scoreParameterValidation(studentId, subjectId, 0);
+        check = scoreParameterValidation(studentId);
+        if(check) scoreParameterValidation(subjectId);
+
         if(!check) return ResPonseExceptionHandler.handleMethodArgumentNotValid("필수 값이 없습니다. 학생 아이디, 과목 아이디를 다시 확인해 주세요.");
 
         StSjSaveRequestDto requestDto = StSjSaveRequestDto.builder()
@@ -69,4 +74,23 @@ public class ScoreController {
         return scoreService.delete(requestDto);
     }
 
+    @Description("특정 학생의 평균 점수 조회 합니다.")
+    @GetMapping("/students/{studentId}/average-score")
+    public ResponseEntity<Object> scoreStudentAvg(@PathVariable Long studentId){
+        boolean check;
+        check = scoreParameterValidation(studentId);
+        if(!check) return ResPonseExceptionHandler.handleMethodArgumentNotValid("필수 값이 없습니다. 학생 아이디를 다시 확인해 주세요.");
+
+        return scoreService.studentScoreAvg(studentId);
+    }
+
+    @Description("특정 과목에 대한 전체 학생들의 평균 점수 조회 합니다.")
+    @GetMapping("/subjects/{subjectId}/average-score")
+    public ResponseEntity<Object> scoreSubjectAvg(@PathVariable Long subjectId){
+        boolean check;
+        check = scoreParameterValidation(subjectId);
+        if(!check) return ResPonseExceptionHandler.handleMethodArgumentNotValid("필수 값이 없습니다. 과목 아이디를 다시 확인해 주세요.");
+
+        return scoreService.subjectScoreAvg(subjectId);
+    }
 }

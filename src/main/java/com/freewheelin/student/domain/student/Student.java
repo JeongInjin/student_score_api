@@ -1,5 +1,6 @@
 package com.freewheelin.student.domain.student;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.freewheelin.student.api.util.EnumPattern;
 import com.freewheelin.student.api.util.StringUtil;
 import com.freewheelin.student.domain.BaseEntity;
@@ -52,6 +53,7 @@ public class Student extends BaseEntity {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "student",cascade = CascadeType.REMOVE)
+    @JsonBackReference
     private List<StSjBridge> stSjBridgeList = new ArrayList<>();
 
     @Builder
@@ -60,6 +62,10 @@ public class Student extends BaseEntity {
         this.age = age;
         this.schoolType = schoolType;
         this.phoneNumber = StringUtil.formatPhoneNumber(phoneNumber);
+        this.id = id;
+    }
+    @Builder
+    public Student(Long id){
         this.id = id;
     }
 }
