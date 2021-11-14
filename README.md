@@ -1,6 +1,8 @@
 # 실행 방법 및 코드 구조 개요.
  
 간단한 실행 방법 및 코드 구조 설명 드리겠습니다.  
+REST API 호출에 대한 처리 및 기능 구현 
+
 [project]  
 * SpringBoot : version 2.4.1
 * dependency-management : version 1.0.10 RELEASE
