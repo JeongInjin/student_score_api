@@ -1,5 +1,7 @@
 package com.freewheelin.student.domain.stsjBridge;
 
+import com.freewheelin.student.api.dto.StudentListResponseDto;
+import com.freewheelin.student.api.dto.SubjectListResponseDto;
 import com.freewheelin.student.domain.BaseEntity;
 import com.freewheelin.student.domain.student.Student;
 import com.freewheelin.student.domain.subject.Subject;
@@ -9,8 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Description("학생이 듣는 과목, 학생(1) : (N)과목(N) : 과목(1) 로 구성되어있음.")
 @RequiredArgsConstructor
@@ -37,10 +37,28 @@ public class StSjBridge extends BaseEntity {
     private int score;
 
     @Builder
-    public StSjBridge(Long id, Student student, Subject subject, int score) {
+    public StSjBridge(Long id, StudentListResponseDto studentDto, SubjectListResponseDto subjectDto, int score) {
         this.id = id;
-        this.student = student;
-        this.subject = subject;
+        this.student = Student.builder()
+                .id(studentDto.getId())
+                .name(studentDto.getName())
+                .age(studentDto.getAge())
+                .schoolType(studentDto.getSchoolType())
+                .phoneNumber(studentDto.getPhoneNumber())
+                .build();
+        this.subject = Subject.builder()
+                .id(subjectDto.getId())
+                .name(subjectDto.getName())
+                .build();
+        this.score = score;
+    }
+    @Builder
+    public StSjBridge(Long studentId, Long subjectId, int score){
+        this.student = Student.builder().id(studentId).build();
+        this.subject = Subject.builder().id(subjectId).build();
+        this.score = score;
+    }
+    public StSjBridge(int score) {
         this.score = score;
     }
 }

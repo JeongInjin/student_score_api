@@ -30,10 +30,10 @@ public class SubjectController {
 
     @Description("과목을 삭제 합니다.")
     @DeleteMapping("/subjects/{subjectId}")
-    public ResponseEntity<Object> delete(@PathVariable Long id){
-        if(id <= 0 || StringUtil.isEmpty(id.toString())) {
+    public ResponseEntity<Object> delete(@PathVariable Long subjectId){
+        if(subjectId <= 0 || StringUtil.isEmpty(subjectId.toString())) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
         }
-        return subjectService.delete(id);
+        return subjectService.delete(subjectId);
     }
 }

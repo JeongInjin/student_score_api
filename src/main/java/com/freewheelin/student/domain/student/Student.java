@@ -51,14 +51,15 @@ public class Student extends BaseEntity {
     @Column(length = 13)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student",cascade = CascadeType.REMOVE)
     private List<StSjBridge> stSjBridgeList = new ArrayList<>();
 
     @Builder
-    public Student(String name, int age, String schoolType, String phoneNumber){
+    public Student(String name, int age, String schoolType, String phoneNumber, Long id){
         this.name = name;
         this.age = age;
         this.schoolType = schoolType;
         this.phoneNumber = StringUtil.formatPhoneNumber(phoneNumber);
+        this.id = id;
     }
 }

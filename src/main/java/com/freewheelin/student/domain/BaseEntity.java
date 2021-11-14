@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
-    private String adminId = "ADMIN"; // 임시로 ADMIN 지정.
+    private String adminId = "API_CALL"; // 임시로 지정(용도 : 호출자 식별번호).
 
     @CreatedDate
     private LocalDateTime createdDate;

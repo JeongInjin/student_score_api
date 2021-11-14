@@ -40,10 +40,10 @@ public class StudentController {
 
     @Description("학생을 삭제 합니다.")
     @DeleteMapping("/students/{studentId}")
-    public ResponseEntity<Object> delete(@PathVariable Long id){
-        if(id <= 0 || StringUtil.isEmpty(id.toString())) {
+    public ResponseEntity<Object> delete(@PathVariable Long studentId){
+        if(studentId <= 0 || StringUtil.isEmpty(studentId.toString())) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
         }
-        return studentService.delete(id);
+        return studentService.delete(studentId);
     }
 }

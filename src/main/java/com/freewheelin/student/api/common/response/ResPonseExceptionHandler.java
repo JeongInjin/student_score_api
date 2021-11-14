@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
+@Service
 public class ResPonseExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
@@ -51,9 +53,22 @@ public class ResPonseExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
+    }
 
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                .body(new CMResponse(Constant.STATUS_CODE.BAD_REQUEST_BODY.getValue(), message));
+    public static ResponseEntity<Object> handleMethodArgumentNotValid(String message){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        CMResponse cmResponse = CMResponse.builder()
+                .code(Constant.STATUS_CODE.BAD_REQUEST_BODY.getValue())
+                .message(message)
+                .build();
+        BaseResponse response = BaseResponse.builder()
+                .data(null)
+                .error(cmResponse)
+                .build();
+
+        return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<Object> errResponseException(ErrResponseDto errResponseDto) {

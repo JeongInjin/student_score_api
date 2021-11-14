@@ -32,11 +32,12 @@ public class Subject extends BaseEntity {
     @Description("과목 이름")
     private String name;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject",cascade = CascadeType.REMOVE)
     private List<StSjBridge> stSjBridgeList = new ArrayList<>();
 
     @Builder
-    public Subject(String name) {
+    public Subject(String name, Long id) {
+        this.id = id;
         this.name = name;
     }
 }
