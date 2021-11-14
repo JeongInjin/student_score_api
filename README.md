@@ -11,7 +11,7 @@
 * dataBase : h2
 * ide : intelliJ 2021.2.3 (Ultimate Edition)  
 <br/>
-* [dataBase] :  접속주소 => http://localhost:8080/h2-console
+* [dataBase] :  접속주소 => http://localhost:8080/h2-console  
 * 기본 조회 :   
 * SELECT * FROM STSJBRIDGE ;
   SELECT * FROM STUDENT ;
@@ -62,7 +62,7 @@
 * domain 쪽은 jpa 관련한 class
 * service는 service 로직을 담당하고 있습니다.
 * resources 는 환경 설정 부분을 담당 합니다.
-* 기본 설정은 딱히 변경 하실 부분으 없으며, 
+* 기본 설정은 딱히 변경 하실 부분은 없으며, 
 * apllication.yml 쪽 batch_size => bulkInsert를 하기위한 queue 싸이즈 설정입니다. 찾아본 결과 jpa bacth insert 는 10000개 정도가 적당해 보입니다.
 <br/>
 
