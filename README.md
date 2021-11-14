@@ -20,9 +20,9 @@ REST API 호출에 대한 처리 및 기능 구현
   SELECT * FROM SUBJECT  ;
 * 
 [설치]  
-* repository 를 내려받고 싶은 폴더로 이동합니다 ex)D/walkspace/example/...  
-* 맥 또는 윈도우 터미널을 여시고 해당 경로로 이동후 git clone [repository 주소]를 입력하시면 됩니다.
-* 완료 후, 해당 프로젝트를 여시면 인텔리제이 같은경우는 gradle 및 필요에 따라 환경이 세팅 됩니다.
+* repository 를 내려받고 싶은 폴더로 이동합니다 ex)D/walkspace/example/...  <br/>
+* 맥 또는 윈도우 터미널을 여시고 해당 경로로 이동후 git clone [repository 주소]를 입력하시면 됩니다.<br/>
+* 완료 후, 해당 프로젝트를 여시면 인텔리제이 같은경우는 gradle 및 필요에 따라 환경이 세팅 됩니다.<br/>
   
 [실행방법]
 * 프로젝트는 기본포트 8080 (변경필요시 application.yml -> server.port = {원하시는 port} 변경 하시면 됩니다.  
